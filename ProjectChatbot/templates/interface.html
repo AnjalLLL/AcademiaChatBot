@@ -1,0 +1,393 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbox</title>
+    <style>
+        /* Floating Chat Button */
+        * General body and layout */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Fixed Header (Logo & College Name) */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #0044cc;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 22px;
+            margin-left: 10px;
+        }
+
+        /* Fixed Navbar */
+        nav {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background-color: #0044cc;
+            padding: 10px 0;
+            text-align: center;
+            z-index: 999;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            margin: 0 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: #0066cc;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 140px; /* Space for header + navbar */
+            padding: 40px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .college-info {
+            max-width: 800px;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        .college-info h2 {
+            font-size: 26px;
+            color: #333;
+        }
+
+        .college-info p {
+            line-height: 1.6;
+        }
+
+        .college-image {
+            width: 600px;
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .college-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+       
+
+ /* Chat Icon (Floating Button) */
+/* Chat Icon (Floating Button) */
+.chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #007bff;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    line-height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s;
+    display: block; /* Make sure the chat icon is visible */
+}
+
+.chat-icon:hover {
+    background: #0056b3;
+}
+
+/* Chatbox (Initially Hidden) */
+.chatbox {
+    display: none; /* Hide by default */
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 400px;
+    height: 500px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Chat Header */
+.chat-header {
+    background: linear-gradient(135deg, #0056b3, #007bff);
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #004080;
+    position: relative;
+}
+
+.chat-header span {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.chat-header span:hover {
+    color: #ffdddd;
+}
+
+
+/* Chat Messages */
+.chat-messages {
+    flex: 1;  /* Takes available space */
+    padding: 15px;
+    background: #f4f7f6;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+}
+
+/* Fix scrolling issue */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: #f4f7f6;
+}
+
+/* Chat Input Area */
+.chat-input-area {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background:#f1f1f1;
+    border-top: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background: #e4d8d8;
+    font-size: 16px;
+    outline: none;
+}
+.user-message {
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 8px;
+    max-width: 75%;
+    font-size: 16px;
+    word-wrap: break-word;
+    background: #007bff;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 0;
+}
+.chatbot-message {
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 8px;
+    max-width: 75%;
+    font-size: 16px;
+    word-wrap: break-word;
+    background: #007bff;
+    color: white;
+    align-self: flex-start;
+}
+.send-button {
+    padding: 12px 18px;
+    border: none;
+    margin: 5px;
+    background: #007bff;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.send-button:hover {
+    background: #0056b3;
+}
+
+    </style>
+</head>
+<body>
+
+     <!-- Header -->
+     <div class="header">
+        <img src="{% static 'image/logo.png' %}" alt="Academia College Logo">
+        <h1>Academia International College</h1>
+    </div>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#contact">Contact</a>
+        <a href="#courses">Courses</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="college-info">
+            <h2>About Academia International College</h2>
+            <p>Academia International College is an educational institution that provides students with a solid academic foundation, enabling them to achieve their individual goals. The college conducts extensive applied research to incorporate the latest developments in industry, commerce, and the public sectors into its courses. It also has strong links with professional bodies and employers, ensuring that its courses are relevant to the needs of employers and equip students with the knowledge and skills required in the workplace of tomorrow.</p>
+        </div>
+        <div class="college-image">
+            <img src="{% static 'image/background.jpg' %}" alt="College Building">
+        </div>
+    </div>
+<!-- Chat Icon (Floating Button) -->
+<div class="chat-icon" id="chatIcon" onclick="toggleChatbox()">💬</div>
+
+<!-- Chatbox (Initially Hidden) -->
+<div class="chatbox" id="chatbox">
+    <div class="chat-header">
+        Chatbot <span id="closeChat" onclick="toggleChatbox()">✖</span>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+        <input type="text" id="userInputField" class="chat-input" placeholder="Type a message...">
+        <button class="send-button" onclick="sendMessage()">➤</button>
+    </div>
+</div>
+
+
+   <script>
+   document.addEventListener("DOMContentLoaded", function () {
+    let userInputField = document.getElementById("userInputField");
+    let chatMessages = document.getElementById("chatMessages");
+
+// Function to toggle chatbox visibility
+function toggleChatbox() {
+    let chatbox = document.getElementById("chatbox");
+
+    // Check if the chatbox is hidden and show it
+    if (chatbox.style.display === "none" || chatbox.style.display === "") {
+        chatbox.style.display = "flex"; // Show chatbox
+    } else {
+        chatbox.style.display = "none"; // Hide chatbox
+    }
+}
+
+// Event listener to open the chatbox when the icon is clicked
+document.getElementById("chatIcon").addEventListener("click", toggleChatbox);
+
+// Event listener to close the chatbox when the close button (✖) is clicked
+document.getElementById("closeChat").addEventListener("click", toggleChatbox);
+
+
+
+
+    function sendMessage() {
+        let userInput = userInputField.value.trim();
+        if (userInput === "") return;
+
+        // Append user message to chat
+        let userMessageDiv = document.createElement("div");
+        userMessageDiv.textContent = userInput;
+        userMessageDiv.classList.add("chat-message", "user-message");
+        chatMessages.appendChild(userMessageDiv);
+
+        // Auto-scroll to bottom
+        setTimeout(() => {
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
+        }, 100);
+
+        // Send message to backend
+        fetch("{% url 'chatbot' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: new URLSearchParams({ "message": userInput })
+        })
+        .then(response => response.json())
+        .then(data => {
+            let botMessageDiv = document.createElement("div");
+            botMessageDiv.textContent = data.response;
+            botMessageDiv.classList.add("chat-message", "chatbot-message");
+            chatMessages.appendChild(botMessageDiv);
+
+            // Auto-scroll again
+            setTimeout(() => {
+                chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
+            }, 100);
+        })
+        .catch(error => console.error("Error:", error));
+
+        // Clear input field after sending
+        userInputField.value = "";
+    }
+
+    // Send message on button click
+    document.querySelector(".send-button").addEventListener("click", sendMessage);
+
+    // Send message on Enter key press
+    userInputField.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            sendMessage();
+            event.preventDefault(); // Prevents new line in input
+        }
+    });
+});
+
+</script>
+</body>
+</html>
