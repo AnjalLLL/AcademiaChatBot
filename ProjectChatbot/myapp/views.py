@@ -4,6 +4,7 @@ import os
 from django.http import JsonResponse
 from django.shortcuts import render
 from langchain_community.embeddings import OllamaEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 from groq import Groq
 import pickle
@@ -68,16 +69,18 @@ llm = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
 # Load FAISS index
-index = faiss.read_index("final_faiss_index_ivf_trained.bin")
+index = faiss.read_index("faiss_index_Huggingface_ivf_trained.bin")
 
 # Load split_docs from file
 with open("final_split_docs.pkl", "rb") as f:
     split_docs = pickle.load(f)
 
 # Load embedding model
-embedding_model = OllamaEmbeddings(model="nomic-embed-text")
+# embedding_model = OllamaEmbeddings(model="nomic-embed-text")
 
-
+embedding_model = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 def chatbot_view(request):
     if request.method == "POST":
         user_message = request.POST.get("message")
